@@ -1,0 +1,21 @@
+[package]
+name = "manga-scraper"
+version = "1.0.0"
+edition = "2024"
+authors = ["yogasungkowo"]
+description = "Unofficial Komikcast API built with Rust, Axum, and Scraper"
+
+[dependencies]
+tokio = { version = "1.43", features = ["full"] }
+axum = { version = "0.8", features = ["macros"] }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["cors", "compression-full", "trace"] }
+reqwest = { version = "0.12", features = ["json", "gzip", "brotli"] }
+scraper = "0.22"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+regex = "1.11"
+url = "2.5"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+chrono = "0.4"
