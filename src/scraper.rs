@@ -240,7 +240,11 @@ pub fn parse_manga_detail(html: &str, slug: &str) -> MangaDetail {
     let genre_sel = Selector::parse("a[href*='genre=']").unwrap();
     let headings_sel = Selector::parse("h2, h3").unwrap();
     let meta_desc_sel = Selector::parse("meta[name='description']").unwrap();
-    let chapter_link_sel =
+    let chapter_list_sel = Selector::parse(
+        ".reader-chapter-list a[href*='/chapter/'], ul[class*='chapter'] a[href*='/chapter/'], li a[href*='/chapter/']",
+    )
+    .unwrap();
+    let chapter_link_fallback_sel =
         Selector::parse(&format!("a[href*='/manga/{}/chapter/']", slug)).unwrap();
     let truncate_sel = Selector::parse("span.truncate").unwrap();
     let span_sel = Selector::parse("span").unwrap();
@@ -363,7 +367,16 @@ pub fn parse_manga_detail(html: &str, slug: &str) -> MangaDetail {
     let mut chapters = Vec::new();
     let mut seen_ch_slugs = HashSet::new();
 
-    for el in document.select(&chapter_link_sel) {
+    let chapter_elements: Vec<_> = {
+        let list_elements: Vec<_> = document.select(&chapter_list_sel).collect();
+        if !list_elements.is_empty() {
+            list_elements
+        } else {
+            document.select(&chapter_link_fallback_sel).collect()
+        }
+    };
+
+    for el in chapter_elements {
         let href = el.value().attr("href").unwrap_or("");
         let segs: Vec<&str> = href.split('/').filter(|s| !s.is_empty()).collect();
         let ch_slug = match segs.last() {
@@ -412,6 +425,16 @@ pub fn parse_manga_detail(html: &str, slug: &str) -> MangaDetail {
             url: href.to_string(),
         });
     }
+
+    // Ensure chapters are sorted descending: latest chapter at index 0, chapter 1 at the end
+    chapters.sort_by(|a, b| {
+        match (b.number, a.number) {
+            (Some(bn), Some(an)) => bn.partial_cmp(&an).unwrap_or(std::cmp::Ordering::Equal),
+            (Some(_), None) => std::cmp::Ordering::Less,
+            (None, Some(_)) => std::cmp::Ordering::Greater,
+            (None, None) => std::cmp::Ordering::Equal,
+        }
+    });
 
     let total_chapters = chapters.len();
     let latest_chapter_number = chapters

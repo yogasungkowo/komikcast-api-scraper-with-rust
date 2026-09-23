@@ -888,6 +888,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c41e0c4fef86961ac6d6f8a82609f55f31b05e4fce149ac5710e439df7619ba4"
 
 [[package]]
+name = "manga-scraper"
+version = "1.0.0"
+dependencies = [
+ "axum",
+ "chrono",
+ "regex",
+ "reqwest",
+ "scraper",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+]
+
+[[package]]
 name = "markup5ever"
 version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2202,25 +2221,6 @@ name = "writeable"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ad82d2a33cdc9674dc7465672f271e096168fcdbe0f799d9e6db8c5892679dc"
-
-[[package]]
-name = "yogasungkowo-manga-scraper"
-version = "1.0.0"
-dependencies = [
- "axum",
- "chrono",
- "regex",
- "reqwest",
- "scraper",
- "serde",
- "serde_json",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "url",
-]
 
 [[package]]
 name = "yoke"
